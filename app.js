@@ -1,7 +1,10 @@
 const express = require("express");
-const mysql = require("mysql");
+const mysql = require("mysql2");
 const bodyParser = require("body-parser");
+require('dotenv').config()
+console.log('Connected to PlanetScale!')
 const cors = require("cors");
+DATABASE_URL='mysql://lu7vj7ycacl97on6jp5c:pscale_pw_qeC2Iu1oZO3AFqKBYftRt0R0Pi0evO1rgLbP8MZc6sI@aws.connect.psdb.cloud/evangadi-forum?ssl={"rejectUnauthorized":true}'
 
 let app = express();
 app.use(express.json());
@@ -11,12 +14,14 @@ app.listen(1008, () => {
   console.log("Listening: 1008");
 });
 
-let createConnection = mysql.createConnection({
-  user: "amanuel",
-  password: "wonde67@AM",
-  host: "127.0.0.1",
-  database: "evangadilogin",
-});
+// let createConnection = mysql.createConnection({
+//   user: "amanuel",
+//   password: "wonde67@AM",
+//   host: "127.0.0.1",
+//   database: "evangadilogin",
+// });
+let createConnection = mysql.createConnection(DATABASE_URL)
+
 createConnection.connect((err) => {
   if (err) console.log(err);
   else console.log("You are succesfully Connected to DB");
