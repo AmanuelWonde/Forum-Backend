@@ -1,15 +1,15 @@
 const express = require("express");
 const mysql = require("mysql2");
 const bodyParser = require("body-parser");
-require('dotenv').config()
+require('dotenv').config();
 console.log('Connected to PlanetScale!')
 const cors = require("cors");
-DATABASE_URL='mysql://lu7vj7ycacl97on6jp5c:pscale_pw_qeC2Iu1oZO3AFqKBYftRt0R0Pi0evO1rgLbP8MZc6sI@aws.connect.psdb.cloud/evangadi-forum?ssl={"rejectUnauthorized":true}'
 let app = express();
+const port = process.env.PORT||80;
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.listen(1008, () => {
+app.listen(port,"0.0.0.0", () => {
   console.log("Listening: 1008");
 });
 
@@ -19,7 +19,7 @@ app.listen(1008, () => {
 //   host: "127.0.0.1",
 //   database: "evangadilogin",
 // });
-let createConnection = mysql.createConnection(DATABASE_URL)
+let createConnection = mysql.createConnection(process.env.DATABASE_URL)
 
 createConnection.connect((err) => {
   if (err) console.log(err);
