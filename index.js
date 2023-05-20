@@ -5,7 +5,6 @@ require('dotenv').config()
 console.log('Connected to PlanetScale!')
 const cors = require("cors");
 DATABASE_URL='mysql://lu7vj7ycacl97on6jp5c:pscale_pw_qeC2Iu1oZO3AFqKBYftRt0R0Pi0evO1rgLbP8MZc6sI@aws.connect.psdb.cloud/evangadi-forum?ssl={"rejectUnauthorized":true}'
-
 let app = express();
 app.use(express.json());
 app.use(cors());
