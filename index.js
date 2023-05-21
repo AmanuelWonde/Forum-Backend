@@ -14,7 +14,7 @@ app.listen(port, "0.0.0.0", () => {
 require('dotenv').config()
 const connection = mysql.createConnection(process.env.DATABASE_URL)
 console.log('Connected to PlanetScale!')
-connection.end()
+// connection.end()
 
 // let connection = mysql.connection({
 //   user: "amanuel",
@@ -24,27 +24,13 @@ connection.end()
 // });
 // let connection = mysql.connection(process.env.DATABASE_URL);
 
-// // connection.connect((err) => {
-// //   if (err) console.log(err);
-// //   else console.log("You are succesfully Connected to DB");
-// // });
+connection.connect((err) => {
+  if (err) console.log(err);
+  else console.log("You are succesfully Connected to DB");
+});
 
 let tempId = 0;
-app.post("/createaccount", (req, res) => {
-  let info = req.body;
-  const name = info.name;
-  const fathersName = info.fatherName;
-  const email = info.email;
-  const password = info.password;
-  const username = info.username;
-  let registration = `CREATE TABLE if not exists registration(
-        user_id int auto_increment,
-        user_name varchar(255) not null,
-        user_email varchar(255) not null,
-        password varchar(255) not null,
-        PRIMARY KEY (user_id)
-)`;
-  let profile = `CREATE TABLE if not exists profile(
+let profile = `CREATE TABLE if not exists profile(
   user_profile_id int auto_increment,
   user_id int(11) not null,
   first_name varchar(255) not null,
@@ -52,16 +38,52 @@ app.post("/createaccount", (req, res) => {
   PRIMARY KEY (user_profile_id)
  
 )`;
+let registration = `CREATE TABLE if not exists registration(
+  user_id int auto_increment,
+  user_name varchar(255) not null,
+  user_email varchar(255) not null,
+  password varchar(255) not null,
+  PRIMARY KEY (user_id)
+)`;
+
+let questionTable = `CREATE TABLE if not exists question(
+  question_id int auto_increment,
+  user_id int(11) not null,
+  question varchar(255) not null,
+  description TEXT not null,
+  PRIMARY KEY (question_id)
+    )`;
+    let answer = `CREATE TABLE if not exists answer(
+      answer_id int auto_increment,
+      user_id int(11) not null,
+      answer varchar(255) not null,
+      PRIMARY KEY (answer_id)
+  
+     )`;
+connection.query(registration, (err, results, fields) => {
+  if (err) console.log(err);
+});
+connection.query(profile, (err, results, fields) => {
+  if (err) throw err;
+});
+connection.query(questionTable, (err, results) => {
+  if (err) throw err;
+  console.log("Table created succesfully");
+});
+connection.query(answer, (err, results) => {
+  if (err) throw err;
+});
+app.post("/createaccount", (req, res) => {
+  let info = req.body;
+  const name = info.name;
+  const fathersName = info.fatherName;
+  const email = info.email;
+  const password = info.password;
+  const username = info.username;
   let checkEmail = `SELECT * FROM registration WHERE  user_email =?`;
   let checkUsername = `SELECT * FROM registration WHERE user_name =?`;
   let dataInsert = `INSERT INTO registration (user_name,user_email,password) VALUES (?, ?, ?)`;
 
-  connection.query(registration, (err, results, fields) => {
-    if (err) console.log(err);
-  });
-  connection.query(profile, (err, results, fields) => {
-    if (err) throw err;
-  });
   connection.query(checkEmail, [email], (err, results) => {
     if (err) {
       throw err;
@@ -147,20 +169,7 @@ app.post("/question", (req, res) => {
   let info = req.body;
   let title = info.title;
   let description = info.description;
-
-  let questionTable = `CREATE TABLE if not exists question(
-question_id int auto_increment,
-user_id int(11) not null,
-question varchar(255) not null,
-description TEXT not null,
-PRIMARY KEY (question_id)
-
-  )`;
   let insertData = `INSERT INTO question (user_id,question,description) VALUE (?, ?, ?)`;
-  connection.query(questionTable, (err, results) => {
-    if (err) throw err;
-    console.log("Table created succesfully");
-  });
   connection.query(
     insertData,
     [tempId, title, description],
@@ -172,18 +181,8 @@ PRIMARY KEY (question_id)
 });
 app.post("/answer", (req, res) => {
   console.log(tempId);
-  let answer = `CREATE TABLE if not exists answer(
-    answer_id int auto_increment,
-    user_id int(11) not null,
-    answer varchar(255) not null,
-    PRIMARY KEY (answer_id)
-
-   )`;
   let insertAnswer = `INSERT INTO answer(user_id,answer) VALUES  (?, ?)`;
   let info = req.body.answer;
-  connection.query(answer, (err, results) => {
-    if (err) throw err;
-  });
   connection.query(insertAnswer, [tempId, info], (err, results) => {
     if (err) throw err;
     console.log("answer inserted");
