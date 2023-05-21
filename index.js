@@ -1,16 +1,16 @@
 const express = require("express");
 const mysql = require("mysql2");
 const bodyParser = require("body-parser");
-require('dotenv').config();
-console.log('Connected to PlanetScale!')
+require("dotenv").config();
+console.log("Connected to PlanetScale!");
 const cors = require("cors");
 let app = express();
-const port = process.env.PORT||80;
+const port = process.env.PORT || 80;
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.listen(port,"0.0.0.0", () => {
-  console.log("Listening: 1008");
+app.listen(port, "0.0.0.0", () => {
+  console.log("Listening...");
 });
 
 // let createConnection = mysql.createConnection({
@@ -19,7 +19,7 @@ app.listen(port,"0.0.0.0", () => {
 //   host: "127.0.0.1",
 //   database: "evangadilogin",
 // });
-let createConnection = mysql.createConnection(process.env.DATABASE_URL)
+let createConnection = mysql.createConnection(process.env.DATABASE_URL);
 
 createConnection.connect((err) => {
   if (err) console.log(err);
@@ -46,8 +46,8 @@ app.post("/createaccount", (req, res) => {
   user_id int(11) not null,
   first_name varchar(255) not null,
   last_name varchar(255) not null,
-  PRIMARY KEY (user_profile_id),
-  FOREIGN KEY (user_id) REFERENCES registration(user_id)
+  PRIMARY KEY (user_profile_id)
+ 
 )`;
   let checkEmail = `SELECT * FROM registration WHERE  user_email =?`;
   let checkUsername = `SELECT * FROM registration WHERE user_name =?`;
@@ -150,8 +150,8 @@ question_id int auto_increment,
 user_id int(11) not null,
 question varchar(255) not null,
 description TEXT not null,
-PRIMARY KEY (question_id),
-FOREIGN KEY (user_id) REFERENCES registration(user_id)
+PRIMARY KEY (question_id)
+
   )`;
   let insertData = `INSERT INTO question (user_id,question,description) VALUE (?, ?, ?)`;
   createConnection.query(questionTable, (err, results) => {
@@ -173,9 +173,8 @@ app.post("/answer", (req, res) => {
     answer_id int auto_increment,
     user_id int(11) not null,
     answer varchar(255) not null,
-    PRIMARY KEY (answer_id),
-    FOREIGN KEY (user_id) REFERENCES registration(user_id)
-    
+    PRIMARY KEY (answer_id)
+
    )`;
   let insertAnswer = `INSERT INTO answer(user_id,answer) VALUES  (?, ?)`;
   let info = req.body.answer;
