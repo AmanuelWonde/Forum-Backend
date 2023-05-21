@@ -1,10 +1,8 @@
 const express = require("express");
-const mysql = require("mysql2");
+const mysql = require('mysql2')
 const bodyParser = require("body-parser");
-require("dotenv").config();
-console.log("Connected to PlanetScale!");
 const cors = require("cors");
-let app = express();
+const app = express();
 const port = process.env.PORT || 80;
 app.use(express.json());
 app.use(cors());
@@ -13,18 +11,23 @@ app.listen(port, "0.0.0.0", () => {
   console.log("Listening...");
 });
 
-// let createConnection = mysql.createConnection({
+require('dotenv').config()
+const connection = mysql.createConnection(process.env.DATABASE_URL)
+console.log('Connected to PlanetScale!')
+connection.end()
+
+// let connection = mysql.connection({
 //   user: "amanuel",
 //   password: "wonde67@AM",
 //   host: "127.0.0.1",
 //   database: "evangadilogin",
 // });
-let createConnection = mysql.createConnection(process.env.DATABASE_URL);
+// let connection = mysql.connection(process.env.DATABASE_URL);
 
-createConnection.connect((err) => {
-  if (err) console.log(err);
-  else console.log("You are succesfully Connected to DB");
-});
+// // connection.connect((err) => {
+// //   if (err) console.log(err);
+// //   else console.log("You are succesfully Connected to DB");
+// // });
 
 let tempId = 0;
 app.post("/createaccount", (req, res) => {
@@ -53,25 +56,25 @@ app.post("/createaccount", (req, res) => {
   let checkUsername = `SELECT * FROM registration WHERE user_name =?`;
   let dataInsert = `INSERT INTO registration (user_name,user_email,password) VALUES (?, ?, ?)`;
 
-  createConnection.query(registration, (err, results, fields) => {
+  connection.query(registration, (err, results, fields) => {
     if (err) console.log(err);
   });
-  createConnection.query(profile, (err, results, fields) => {
+  connection.query(profile, (err, results, fields) => {
     if (err) throw err;
   });
-  createConnection.query(checkEmail, [email], (err, results) => {
+  connection.query(checkEmail, [email], (err, results) => {
     if (err) {
       throw err;
     } else if (results.length > 0) {
       res.end("This email allready exist");
     } else {
-      createConnection.query(checkUsername, [username], (err, results) => {
+      connection.query(checkUsername, [username], (err, results) => {
         if (err) {
           throw err;
         } else if (results.length > 0) {
           res.end("The user name already exist");
         } else {
-          createConnection.query(
+          connection.query(
             dataInsert,
             [username, email, password],
             (err, results, fields) => {
@@ -85,7 +88,7 @@ app.post("/createaccount", (req, res) => {
               }
             }
           );
-          createConnection.query(
+          connection.query(
             `INSERT INTO profile(user_id,first_name,last_name) VALUES (?, ?, ?)`,
             [tempId, name, fathersName],
             (err, results) => {
@@ -101,7 +104,7 @@ app.post("/login", (req, res) => {
   let info = req.body;
   const email = info.email;
   const password = info.password;
-  createConnection.query(
+  connection.query(
     `SELECT * FROM registration WHERE user_email = ? and password = ? `,
     [email, password],
     (err, results) => {
@@ -122,7 +125,7 @@ app.post("/login", (req, res) => {
   );
 });
 app.get("/user", (req, res) => {
-  createConnection.query(
+  connection.query(
     `SELECT * FROM registration WHERE user_id = ? `,
     [tempId],
     (err, results) => {
@@ -154,11 +157,11 @@ PRIMARY KEY (question_id)
 
   )`;
   let insertData = `INSERT INTO question (user_id,question,description) VALUE (?, ?, ?)`;
-  createConnection.query(questionTable, (err, results) => {
+  connection.query(questionTable, (err, results) => {
     if (err) throw err;
     console.log("Table created succesfully");
   });
-  createConnection.query(
+  connection.query(
     insertData,
     [tempId, title, description],
     (err, results) => {
@@ -178,17 +181,17 @@ app.post("/answer", (req, res) => {
    )`;
   let insertAnswer = `INSERT INTO answer(user_id,answer) VALUES  (?, ?)`;
   let info = req.body.answer;
-  createConnection.query(answer, (err, results) => {
+  connection.query(answer, (err, results) => {
     if (err) throw err;
   });
-  createConnection.query(insertAnswer, [tempId, info], (err, results) => {
+  connection.query(insertAnswer, [tempId, info], (err, results) => {
     if (err) throw err;
     console.log("answer inserted");
   });
 });
 app.get("/userQuestion", (req, res) => {
   let userQuestion = `SELECT registration.user_id,registration.user_name,question.question,question.question_id FROM registration,question WHERE registration.user_id = question.user_id ORDER BY question.question_id`;
-  createConnection.query(userQuestion, (err, results) => {
+  connection.query(userQuestion, (err, results) => {
     if (err) {
       throw err;
     } else {
