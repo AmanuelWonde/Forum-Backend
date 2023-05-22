@@ -12,16 +12,16 @@ app.listen(port, "0.0.0.0", () => {
 });
 
 require('dotenv').config()
-const connection = mysql.createConnection(process.env.DATABASE_URL)
-console.log('Connected to PlanetScale!')
-// connection.end()
+// const connection = mysql.createConnection(process.env.DATABASE_URL)
+// console.log('Connected to PlanetScale!')
+// // connection.end()
 
-// let connection = mysql.connection({
-//   user: "amanuel",
-//   password: "wonde67@AM",
-//   host: "127.0.0.1",
-//   database: "evangadilogin",
-// });
+let connection = mysql.createConnection({
+  user: "sql9620077",
+  password: "TtMDmWP31c",
+  host: "sql9.freesqldatabase.com",
+  database: "sql9620077",
+});
 // let connection = mysql.connection(process.env.DATABASE_URL);
 
 connection.connect((err) => {
