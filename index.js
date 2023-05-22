@@ -68,7 +68,7 @@ connection.query(profile, (err, results, fields) => {
 });
 connection.query(questionTable, (err, results) => {
   if (err) throw err;
-  console.log("Table created succesfully");
+  console.log("Table  created succesfully");
 });
 connection.query(answer, (err, results) => {
   if (err) throw err;
